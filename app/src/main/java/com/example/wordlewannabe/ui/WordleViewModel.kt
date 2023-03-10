@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-const val TAG = "ViewModel"
+
 
 class WordleViewModel : ViewModel() {
 
@@ -16,6 +16,8 @@ class WordleViewModel : ViewModel() {
 
     private lateinit var currentWord : String
     val usedWords : MutableSet<String> = mutableSetOf()
+
+    val TAG = "ViewModel"
 
     init {
         resetGame()

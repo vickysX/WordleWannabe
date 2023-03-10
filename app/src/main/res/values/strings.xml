@@ -1,5 +1,25 @@
 <resources>
     <string name="app_name">Wordle Wannabe</string>
 
+    <string name="next_btn">Play</string>
 
+    <string name="game_rules_first">
+        Welcome to Wordle\! You can guess the word in six tries.
+        Each guess must be a valid 5-letter word. After each guess the tiles
+        will change color:
+    </string>
+    <string name="green">green</string>
+    <string name="game_rules_second">
+        if the letter is in the word and in the
+        correct spot,
+    </string>
+    <string name="yellow">yellow</string>
+    <string name="game_rules_third">
+        if the letter is in the word, but in the wrong
+        spot,
+    </string>
+    <string name="gray">gray</string>
+    <string name="game_rules_last">
+         if the word is not in the word in any spot. Have fun\!
+    </string>
 </resources>

@@ -1,7 +1,14 @@
 package com.example.wordlewannabe.data
 
-import java.io.File
 
 object WordsData {
-    val words = File("assets/solutions.txt").readLines().toSet()
+    val words : Set<String> =
+       setOf(
+           "adieu", "tares", "soare", "ducat",
+           "ouija", "carom", "ergot", "craic",
+           "squab", "enoki", "azure", "cloud",
+           "about", "adobe", "value", "death",
+           "press", "alien", "human", "candy",
+       )
+
 }
