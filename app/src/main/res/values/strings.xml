@@ -22,4 +22,9 @@
     <string name="game_rules_last">
          if the word is not in the word in any spot. Have fun\!
     </string>
+
+    <string name="game_over">GAME OVER!</string>
+    <string name="dialog_text">Do you want to play again?</string>
+    <string name="exit">EXIT</string>
+    <string name="play_again">PLAY AGAIN</string>
 </resources>

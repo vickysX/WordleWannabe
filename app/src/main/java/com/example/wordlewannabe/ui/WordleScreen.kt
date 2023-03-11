@@ -59,7 +59,20 @@ fun WordleApp(
                 )
             }
             composable(route = Screen.Game.name) {
-                GameScreen()
+                GameScreen(
+                    onLetterGuessed = {guess ->
+                        viewModel.updateUserGuess(guess)
+                    },
+                    onWordFinished = {wordNum ->
+                        viewModel.checkUserGuess(wordNum)
+                    },
+                    word = viewModel.userGuess,
+                    isGameOver = wordleUIState.value.isGameOver,
+                    isWordFinished = wordleUIState.value.isWordFinished,
+                    isRowEnabled = wordleUIState.value.isRowEnabled,
+                    guessCheck = wordleUIState.value.guessCheck,
+                    replayGame = {viewModel.resetGame()}
+                )
             }
         }
     }
