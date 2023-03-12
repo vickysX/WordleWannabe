@@ -25,6 +25,10 @@
 
     <string name="game_over">GAME OVER!</string>
     <string name="dialog_text">Do you want to play again?</string>
+
     <string name="exit">EXIT</string>
     <string name="play_again">PLAY AGAIN</string>
+
+    <string name="congratulations">Congratulations!</string>
+    <string name="game_won">You guessed the wordle! Do you want to play again?</string>
 </resources>

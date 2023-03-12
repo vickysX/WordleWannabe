@@ -13,5 +13,6 @@ data class WordleUIState(
         true, false, false,
         false, false, false
     ),
+    val isWordGuessed : Boolean = false,
     val isGameOver : Boolean = false
 )

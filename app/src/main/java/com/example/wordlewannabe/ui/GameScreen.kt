@@ -1,6 +1,7 @@
 package com.example.wordlewannabe.ui
 
 import android.app.Activity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,15 +18,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.wordlewannabe.R
-import com.example.wordlewannabe.ui.theme.WordleWannabeTheme
 
 @Composable
 fun GameScreen(
@@ -35,6 +36,7 @@ fun GameScreen(
     isRowEnabled : List<Boolean>,
     guessCheck : MutableList<Pair<String, LetterStatus>?>,
     isGameOver : Boolean,
+    isGameWon: Boolean,
     onLetterGuessed: (Pair<String, Int>) -> Unit,
     onWordFinished : (Int) -> Unit,
     replayGame : () -> Unit
@@ -94,9 +96,10 @@ fun GameScreen(
             isWordFinished = isWordFinished[5],
             guessCheck = guessCheck
         )
-        if (isGameOver) {
+        if (isGameOver || isGameWon) {
             FinalAlertDialog(
-                onConfirmButton = replayGame
+                onConfirmButton = replayGame,
+                isGameWon = isGameWon
             )
         }
     }
@@ -122,7 +125,7 @@ fun WordRow(
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
-            guessCheck = guessCheck[0],
+            guessCheck = guessCheck,
             modifier = Modifier.weight(1f)
         ) {
 
@@ -133,7 +136,7 @@ fun WordRow(
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
-            guessCheck = guessCheck[1],
+            guessCheck = guessCheck,
             modifier = Modifier.weight(1f)
         ) {
 
@@ -144,7 +147,7 @@ fun WordRow(
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
-            guessCheck = guessCheck[2],
+            guessCheck = guessCheck,
             modifier = Modifier.weight(1f)
         ) {
 
@@ -155,7 +158,7 @@ fun WordRow(
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
-            guessCheck = guessCheck[3],
+            guessCheck = guessCheck,
             modifier = Modifier.weight(1f)
         ) {
 
@@ -167,85 +170,10 @@ fun WordRow(
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
             onKeyboardDone = onKeyboardDone,
-            guessCheck = guessCheck[4],
+            guessCheck = guessCheck,
             modifier = Modifier.weight(1f)
         )
     }
-        /*val focusManager = LocalFocusManager.current
-        TextField(
-            value = word[0],
-            onValueChange = {onLetterGuessed(Pair(it, 0))},
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    focusManager.moveFocus(FocusDirection.Right)
-                }
-            ),
-            modifier = Modifier.weight(1f),
-            enabled = enabled
-        )
-        TextField(
-            value = word[1],
-            onValueChange = {onLetterGuessed(Pair(it, 1))},
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    focusManager.moveFocus(FocusDirection.Right)
-                }
-            ),
-            modifier = Modifier.weight(1f),
-            enabled = enabled
-        )
-        TextField(
-            value = word[2],
-            onValueChange = {onLetterGuessed(Pair(it, 2))},
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    focusManager.moveFocus(FocusDirection.Right)
-                }
-            ),
-            modifier = Modifier.weight(1f),
-            enabled = enabled
-        )
-        TextField(
-            value = word[3],
-            onValueChange = {onLetterGuessed(Pair(it, 3))},
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    focusManager.moveFocus(FocusDirection.Right)
-                }
-            ),
-            modifier = Modifier.weight(1f),
-            enabled = enabled
-        )
-        TextField(
-            value = word[4],
-            onValueChange = {onLetterGuessed(Pair(it, 4))},
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {onKeyboardDone()}
-            ),
-            modifier = Modifier.weight(1f),
-            enabled = enabled
-        )
-    }*/
 }
 
 @Composable
@@ -254,13 +182,13 @@ fun LetterField(
     index : Int,
     word : List<String>,
     isWordFinished: Boolean,
-    guessCheck : Pair<String, LetterStatus>?,
+    guessCheck : MutableList<Pair<String, LetterStatus>?>,
     enabled: Boolean,
     onLetterGuessed: (Pair<String, Int>) -> Unit,
     onKeyboardDone: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    //if (isWordFinished == false) {
+    if (!isWordFinished) {
         TextField(
             value = word[index],
             onValueChange = {onLetterGuessed(Pair(it, index))},
@@ -289,25 +217,46 @@ fun LetterField(
             modifier = modifier,
             enabled = enabled
         )
-    //} else {
+    } else {
         // display letters in color
-    //}
+        Text(
+            text = guessCheck[index]!!.first.uppercase(),
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.background(
+                color = guessCheck[index]!!.second.color
+            )
+        )
+    }
 
 }
 
 @Composable
 fun FinalAlertDialog(
     modifier: Modifier = Modifier,
+    isGameWon : Boolean,
     onConfirmButton : () -> Unit
 ) {
     val activity = LocalContext.current as Activity
+    val title = when {
+        isGameWon -> stringResource(id = R.string.congratulations)
+        else -> stringResource(id = R.string.game_over)
+    }
+    val dialogText = when {
+        isGameWon -> stringResource(id = R.string.game_won)
+        else -> stringResource(id = R.string.dialog_text)
+    }
     AlertDialog(
         onDismissRequest = {},
         title = {
-            Text(stringResource(id = R.string.game_over))
+            Text(
+                text = title
+            )
         },
         text = {
-            Text(stringResource(id = R.string.dialog_text))
+            Text(
+                text = dialogText
+            )
         },
         dismissButton = {
             TextButton(onClick = {activity.finish()}) {
