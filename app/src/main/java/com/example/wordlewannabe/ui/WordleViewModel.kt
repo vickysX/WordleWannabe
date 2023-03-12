@@ -1,9 +1,6 @@
 package com.example.wordlewannabe.ui
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.example.wordlewannabe.data.WordsData
@@ -25,12 +22,16 @@ class WordleViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(WordleUIState())
     val uiState : StateFlow<WordleUIState> = _uiState.asStateFlow()
 
-    private lateinit var currentWord : MutableList<String>
+    private lateinit var currentWord : String
     private val usedWords : MutableSet<String> = mutableSetOf()
-    var userGuess by mutableStateOf(mutableListOf("", "", "", "", ""))
-        private set
 
-    val TAG = "ViewModel"
+    private val userGuess :MutableList<String> = MutableList(5) {""}
+    private val guessComparison : MutableList<Pair<String, LetterStatus>?> = mutableListOf(
+        null, null, null, null, null
+    )
+
+
+    private val TAG = "ViewModel"
 
     init {
         resetGame()
@@ -42,37 +43,63 @@ class WordleViewModel : ViewModel() {
     }
 
     fun updateUserGuess(input : Pair<String, Int>) {
+        when (input.second) {
+            0 -> _uiState.update {
+                it.copy(
+                    first = input.first
+                )
+            }
+            1 -> _uiState.update {
+                it.copy(
+                    second = input.first
+                )
+            }
+            2 -> _uiState.update {
+                it.copy(
+                    third = input.first
+                )
+            }
+            3 -> _uiState.update {
+                it.copy(
+                    fourth = input.first
+                )
+            }
+            else -> _uiState.update {
+                it.copy(
+                    fifth = input.first
+                )
+            }
+        }
         userGuess[input.second] = input.first
+        Log.d(TAG, "userGuess = $userGuess")
     }
 
     fun checkUserGuess(wordIndex : Int) {
-        val guessComparison : MutableList<Pair<String, LetterStatus>?> = mutableListOf(
-            null, null, null, null, null
-        )
-        var i : Int
-        for (letter in userGuess) {
-            i = userGuess.indexOf(letter)
-            if (currentWord.contains(letter) && currentWord[i] != letter) {
-                guessComparison[i] = Pair(letter, LetterStatus.IS_LETTER_IN_WORD_WRONG_POSITION)
-            } else if (currentWord.contains(letter)) {
-                guessComparison[i] = Pair(letter, LetterStatus.IS_LETTER_IN_WORD_RIGHT_POSITION)
+        for (i in 0 until userGuess.size) {
+            if (userGuess[i] == currentWord[i].toString()) {
+                guessComparison[i] = Pair(userGuess[i], LetterStatus.IS_LETTER_IN_WORD_RIGHT_POSITION)
             } else {
-                guessComparison[i] = Pair(letter, LetterStatus.LETTER_NOT_IN_WORD)
+                if (currentWord.contains(userGuess[i])) {
+                    guessComparison[i] = Pair(userGuess[i], LetterStatus.IS_LETTER_IN_WORD_WRONG_POSITION)
+                } else {
+                    guessComparison[i] = Pair(userGuess[i], LetterStatus.LETTER_NOT_IN_WORD)
+                }
             }
         }
-        updateUIState(guessComparison, wordIndex)
+        updateUIState(wordIndex)
     }
 
     private fun updateUIState(
-        guessComparison : MutableList<Pair<String, LetterStatus>?>,
         wordIndex: Int
     ) {
         val wordFinished = _uiState.value.isWordFinished
         wordFinished[wordIndex] = true
+        val guessCheck = _uiState.value.guessCheck
+        guessCheck[wordIndex] = guessComparison
         val nextWordEnabled = _uiState.value.isRowEnabled
         var isGameOver = false
         if (wordIndex < 5) {
-            nextWordEnabled[wordIndex] = true
+            nextWordEnabled[wordIndex + 1] = true
         } else {
             isGameOver = true
         }
@@ -80,9 +107,14 @@ class WordleViewModel : ViewModel() {
             it.copy(
                 isWordFinished = wordFinished,
                 isRowEnabled = nextWordEnabled,
-                guessCheck = guessComparison,
+                guessCheck = _uiState.value.guessCheck,
                 isWordGuessed = isWordGuessed(guessComparison),
-                isGameOver = isGameOver
+                isGameOver = isGameOver,
+                first = "",
+                second = "",
+                third = "",
+                fifth = "",
+                fourth = ""
             )
         }
     }
@@ -97,17 +129,15 @@ class WordleViewModel : ViewModel() {
     }
 
     private fun chooseWord() {
-        var word: String
         do {
-            word = WordsData.words.random()
-        } while (usedWords.contains(word))
-        currentWord = word.split("") as MutableList<String>
+            currentWord = WordsData.words.random()
+        } while (usedWords.contains(currentWord))
         _uiState.update {currentState ->
             currentState.copy(
                 currentWord = currentWord
             )
         }
-        usedWords.add(word)
-        Log.d(TAG, "currentWord = $word")
+        usedWords.add(currentWord)
+        Log.d(TAG, "currentWord = $currentWord")
     }
 }

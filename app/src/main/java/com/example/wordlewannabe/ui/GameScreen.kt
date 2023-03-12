@@ -26,15 +26,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.wordlewannabe.R
 
 @Composable
 fun GameScreen(
     modifier: Modifier = Modifier,
-    word : List<String>,
+    first : String,
+    second : String,
+    third : String,
+    fourth : String,
+    fifth : String,
     isWordFinished: List<Boolean>,
     isRowEnabled : List<Boolean>,
-    guessCheck : MutableList<Pair<String, LetterStatus>?>,
+    guessCheck : MutableList<MutableList<Pair<String, LetterStatus>?>>,
     isGameOver : Boolean,
     isGameWon: Boolean,
     onLetterGuessed: (Pair<String, Int>) -> Unit,
@@ -49,52 +54,76 @@ fun GameScreen(
             .verticalScroll(rememberScrollState())
     ) {
         WordRow(
-            word = word,
-            onLetterGuessed = onLetterGuessed,
+            first = first,
+            second = second,
+            third = third,
+            fourth = fourth,
+            fifth = fifth,
+            onLetterGuessed = {onLetterGuessed(it)},
             onKeyboardDone = {onWordFinished(0)},
             enabled = isRowEnabled[0],
             isWordFinished = isWordFinished[0],
-            guessCheck = guessCheck
+            guessCheck = guessCheck[0]
         )
         WordRow(
-            word = word,
-            onLetterGuessed = onLetterGuessed,
+            first = first,
+            second = second,
+            third = third,
+            fourth = fourth,
+            fifth = fifth,
+            onLetterGuessed = {onLetterGuessed(it)},
             onKeyboardDone = {onWordFinished(1)},
             enabled = isRowEnabled[1],
             isWordFinished = isWordFinished[1],
-            guessCheck = guessCheck
+            guessCheck = guessCheck[1]
         )
         WordRow(
-            word = word,
-            onLetterGuessed = onLetterGuessed,
+            first = first,
+            second = second,
+            third = third,
+            fourth = fourth,
+            fifth = fifth,
+            onLetterGuessed = {onLetterGuessed(it)},
             onKeyboardDone = {onWordFinished(2)},
             enabled = isRowEnabled[2],
             isWordFinished = isWordFinished[2],
-            guessCheck = guessCheck
+            guessCheck = guessCheck[2]
         )
         WordRow(
-            word = word,
-            onLetterGuessed = onLetterGuessed,
+            first = first,
+            second = second,
+            third = third,
+            fourth = fourth,
+            fifth = fifth,
+            onLetterGuessed = {onLetterGuessed(it)},
             onKeyboardDone = {onWordFinished(3)},
             enabled = isRowEnabled[3],
             isWordFinished = isWordFinished[3],
-            guessCheck = guessCheck
+            guessCheck = guessCheck[3]
         )
         WordRow(
-            word = word,
-            onLetterGuessed = onLetterGuessed,
+            first = first,
+            second = second,
+            third = third,
+            fourth = fourth,
+            fifth = fifth,
+            onLetterGuessed = {onLetterGuessed(it)},
             onKeyboardDone = {onWordFinished(4)},
             enabled = isRowEnabled[4],
             isWordFinished = isWordFinished[4],
-            guessCheck = guessCheck
+            guessCheck = guessCheck[4]
         )
         WordRow(
-            word = word,
-            onLetterGuessed = onLetterGuessed,
+            first = first,
+            second = second,
+            third = third,
+            fourth = fourth,
+            fifth = fifth,
+            onLetterGuessed = {onLetterGuessed(it)},
             onKeyboardDone = {onWordFinished(5)},
             enabled = isRowEnabled[5],
             isWordFinished = isWordFinished[5],
-            guessCheck = guessCheck
+            guessCheck = guessCheck[5]
         )
         if (isGameOver || isGameWon) {
             FinalAlertDialog(
@@ -109,7 +138,11 @@ fun GameScreen(
 @Composable
 fun WordRow(
     modifier: Modifier = Modifier,
-    word: List<String>,
+    first: String,
+    second: String,
+    third: String,
+    fourth: String,
+    fifth: String,
     isWordFinished : Boolean,
     guessCheck: MutableList<Pair<String, LetterStatus>?>,
     enabled : Boolean,
@@ -121,7 +154,7 @@ fun WordRow(
     ) {
         LetterField(
             index = 0,
-            word = word,
+            letter = first,
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
@@ -132,7 +165,7 @@ fun WordRow(
         }
         LetterField(
             index = 1,
-            word = word,
+            letter = second,
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
@@ -143,7 +176,7 @@ fun WordRow(
         }
         LetterField(
             index = 2,
-            word = word,
+            letter = third,
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
@@ -154,7 +187,7 @@ fun WordRow(
         }
         LetterField(
             index = 3,
-            word = word,
+            letter = fourth,
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
@@ -165,7 +198,7 @@ fun WordRow(
         }
         LetterField(
             index = 4,
-            word = word,
+            letter = fifth,
             isWordFinished = isWordFinished,
             enabled = enabled,
             onLetterGuessed = onLetterGuessed,
@@ -180,7 +213,7 @@ fun WordRow(
 fun LetterField(
     modifier: Modifier = Modifier, // remember weight modifier
     index : Int,
-    word : List<String>,
+    letter : String,
     isWordFinished: Boolean,
     guessCheck : MutableList<Pair<String, LetterStatus>?>,
     enabled: Boolean,
@@ -190,7 +223,7 @@ fun LetterField(
     val focusManager = LocalFocusManager.current
     if (!isWordFinished) {
         TextField(
-            value = word[index],
+            value = letter,
             onValueChange = {onLetterGuessed(Pair(it, index))},
             keyboardOptions = if (index == 4) {
                 KeyboardOptions(
@@ -219,10 +252,13 @@ fun LetterField(
         )
     } else {
         // display letters in color
+        //val text = guessCheck[index]!!.first.uppercase()
+        //val letterColor = guessCheck[index]!!.second.color
         Text(
             text = guessCheck[index]!!.first.uppercase(),
             color = Color.White,
             fontWeight = FontWeight.Bold,
+            fontSize = 60.sp,
             modifier = Modifier.background(
                 color = guessCheck[index]!!.second.color
             )

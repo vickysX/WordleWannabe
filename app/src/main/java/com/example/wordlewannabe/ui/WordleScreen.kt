@@ -61,7 +61,11 @@ fun WordleApp(
                     onWordFinished = {wordNum ->
                         viewModel.checkUserGuess(wordNum)
                     },
-                    word = viewModel.userGuess,
+                    first = wordleUIState.value.first,
+                    second = wordleUIState.value.second,
+                    third = wordleUIState.value.third,
+                    fourth = wordleUIState.value.fourth,
+                    fifth = wordleUIState.value.fifth,
                     isGameOver = wordleUIState.value.isGameOver,
                     isGameWon = wordleUIState.value.isWordGuessed,
                     isWordFinished = wordleUIState.value.isWordFinished,
